@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./Backend
+    container_name: asset-backend65
+    ports:
+      - "3025:3025"
+    depends_on:
+      - postgres
+    environment:
+      - PGUSER=postgres
+      - PGPASSWORD=admin123
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGDATABASE=asset_management
+    volumes:
+      - ./Backend:/app
+
+  employee-asset:
+    build: ./Employee-Asset
+    container_name: asset-employee65
+    ports:
+      - "8044:80"
+    depends_on:
+      - backend
+
+  hr-asset:
+    build: ./Hr-Asset
+    container_name: asset-hr65
+    ports:
+      - "8045:80"
+    depends_on:
+      - backend
+
+  postgres:
+    image: postgres:13
+    container_name: asset-db65
+    ports:
+      - "5420:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_DB=asset_management
+    volumes:
+      - pgdata65:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pgdata65:
+
